@@ -1,0 +1,21 @@
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Environments and editors
+.venv/
+venv/
+env/
+.env
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+
+# Gradio
+.gradio/
+flagged/
+
+# NOTE: models/ and reports/ must NOT be ignored - the Space needs them.
