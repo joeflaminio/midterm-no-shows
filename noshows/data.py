@@ -8,7 +8,7 @@ def make_appointments(n: int = 4000, seed: int = 11) -> pd.DataFrame:
     """Return n invented appointments. no_show is 1 for a missed visit."""
     rng = np.random.default_rng(seed)
     lead_days = rng.gamma(2.0, 6.0, n).clip(0, 60).round().astype(int)
-    age = np.round(rng.normal(46, 15, n)).clip(16, 92).astype(int)
+    age = np.round(rng.normal(46, 15, n).clip(16, 92)).astype(int)
     prior_no_shows = rng.poisson(0.5, n).clip(0, 6)
     hour = rng.choice(np.arange(8, 18), n)
     weekday = rng.choice(["mon", "tue", "wed", "thu", "fri"], n)
