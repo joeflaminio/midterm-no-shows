@@ -28,8 +28,9 @@
   },
   "tuning_gain": 0.001778527932794427,
   "warning": "Training-only development results, not final metrics. This PR branch is based on Joe's PR2 and still has its older generator; these results used corrected main generator at the recorded commit. Integrate corrected main before reproducing. OOF probabilities remain local. Hyperparameter-selected OOF is not nested CV.",
-  "report_sha256": {
+  "source_csv_sha256_before_git_line_ending_normalization": {
     "training_cv_summary.csv": "d9106cee99fc9c994ea8a342a9f71da29f287dd8f9f9cf52748e24c0c480dea7",
     "training_tuning_grid.csv": "02c500b22610cabb6dff45cf4b8a855e22c81cd42e9f63cad3d6bd7bb36f0934"
-  }
+  },
+  "csv_line_endings": "Source evidence CSVs used Windows CRLF; Git stores LF. Hashes above identify original archived source bytes, not normalized Git blobs."
 }
