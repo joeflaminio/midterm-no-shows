@@ -1,0 +1,35 @@
+{
+  "utc": "2026-11-17T22:49:26.975921+00:00",
+  "numpy": "2.4.6",
+  "pandas": "3.1.1",
+  "sklearn": "1.9.1",
+  "seed": 11,
+  "training_rows": 3000,
+  "cv": "5-fold stratified shuffled seed11",
+  "std_ddof": 0,
+  "selection_metric": "f1",
+  "generator_main_commit": "d061c41861006984fbe51760234ab3fc566b4688",
+  "pipeline_commit": "473e58f98651582b1fbdc1fdd08e2fb3e436a992",
+  "generator_ast_matches_pdf_reference": true,
+  "source_sha256": {
+    "noshows\\data.py": "44e53ed91977d764f16c7fc5e8a2204eee58de1b3e35dc47ae2bdebeae0e99f2",
+    "noshows\\pipeline.py": "21d47c61b1b0215c18d558aa80ca4b05588fce0c083d4910876602ce9db4b2ce",
+    "noshows\\train.py": "b1e40b293c769b90583c8de2db24d375dd9ea22c181421f052a94a539487ea98",
+    "run_initial_cv.py": "ed82994a26ab901651443c14b369f52357c09c5e787a69cd732469d50ca2b220"
+  },
+  "split_indices_sha256": "30c1b7100a2a4dcecbd801d418a091fdf85ff285d0817ff0e5e3cf86bd7026bc",
+  "python_version": "3.11.18",
+  "execution": "Windows Conda",
+  "holdout_evaluated": false,
+  "threshold_selected": false,
+  "best_params": {
+    "model__C": 0.1,
+    "model__solver": "lbfgs"
+  },
+  "tuning_gain": 0.001778527932794427,
+  "warning": "Training-only development results, not final metrics. This PR branch is based on Joe's PR2 and still has its older generator; these results used corrected main generator at the recorded commit. Integrate corrected main before reproducing. OOF probabilities remain local. Hyperparameter-selected OOF is not nested CV.",
+  "report_sha256": {
+    "training_cv_summary.csv": "d9106cee99fc9c994ea8a342a9f71da29f287dd8f9f9cf52748e24c0c480dea7",
+    "training_tuning_grid.csv": "02c500b22610cabb6dff45cf4b8a855e22c81cd42e9f63cad3d6bd7bb36f0934"
+  }
+}
