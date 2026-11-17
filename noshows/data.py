@@ -1,3 +1,7 @@
+"""Invented physiotherapy appointments, for the Midterm Project."""
+import numpy as np
+import pandas as pd
+
 def make_appointments(n: int = 4000, seed: int = 11) -> pd.DataFrame:
 """Return n invented appointments. no_show is 1 for a missed visit."""
 rng = np.random.default_rng(seed)
