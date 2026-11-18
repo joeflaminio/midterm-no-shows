@@ -89,3 +89,37 @@ def test_choose_threshold_full_grid():
     assert len(thresholds) == 19
     assert thresholds[0] == pytest.approx(0.05)
     assert thresholds[-1] == pytest.approx(0.95)
+
+
+def test_choose_threshold_calls_never_worthwhile():
+    """Avoid calls when calling is more expensive than missing appointments."""
+    actual = [1, 0, 1, 0]
+    probabilities = [0.9, 0.8, 0.4, 0.2]
+    thresholds = [0.05, 0.5, 0.95]
+
+    result = choose_threshold(
+        actual,
+        probabilities,
+        thresholds,
+        call_cost=100,
+        miss_cost=1,
+    )
+
+    assert result == pytest.approx(0.95)
+
+
+def test_choose_threshold_missed_no_shows_very_costly():
+    """Prefer calling more patients when missing no-shows is expensive."""
+    actual = [1, 0, 1, 0]
+    probabilities = [0.9, 0.8, 0.4, 0.2]
+    thresholds = [0.05, 0.5, 0.95]
+
+    result = choose_threshold(
+        actual,
+        probabilities,
+        thresholds,
+        call_cost=1,
+        miss_cost=1000,
+    )
+
+    assert result == pytest.approx(0.05)
