@@ -57,3 +57,8 @@ See reports/training_progress.md for results, source-hash convention and limitat
 This separate safe command supersedes the pending threshold/leakage status above;
 it does not change the original CV-only reproduction or its archived evidence.
 Final model, final holdout evaluation and deployment remain pending.
+
+Finalization has now been completed once with approved settings. See
+reports/final_results.md. The final train entrypoint is guarded against repeats;
+training-only reproduction remains safe. Do not remove final_run_lock.json or
+final outputs to repeat evaluation without separate authorization.

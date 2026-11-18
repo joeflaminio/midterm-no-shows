@@ -1,0 +1,13 @@
+{
+  "frozen_settings": {
+    "model": "logistic_balanced",
+    "C": 0.1,
+    "solver": "lbfgs",
+    "threshold": 0.45,
+    "seed": 11
+  },
+  "training_rows": 3000,
+  "test_rows": 1000,
+  "status": "completed_once",
+  "model_sha256": "123503b54029324b86d28662058eb8256a7e1769d57ef8788a188473b2aa9342"
+}

@@ -1,0 +1,21 @@
+{
+  "pre_evaluation_code_commit": "fac1477",
+  "confusion_matrix": {
+    "tp": 188,
+    "fp": 297,
+    "fn": 74,
+    "tn": 441
+  },
+  "recorded_output_metrics_independently_verified": true,
+  "holdout_predict_calls": 1,
+  "predictor_branch_commit": "3591bf29ff4b147255d24fa5bb2010f9b1c8e579",
+  "predictor_check": "loaded original teammate modules read-only from Git; invented valid appointment with blank distance; no teammate files changed",
+  "toy_appointment_probability": 0.5414651232780119,
+  "toy_appointment_call": true,
+  "artifacts_sha256": {
+    "models\\no_show.joblib": "123503b54029324b86d28662058eb8256a7e1769d57ef8788a188473b2aa9342",
+    "models\\model_info.json": "fa861e6d8b7294d6566862482d612e2b24a4805f737432dec3c3e6ca3d26f29f",
+    "reports\\final_predictions.csv": "22baabfeb8c18932946e9f84286f91ddfc4ef8cadb0a6c09baa63ef1d3aa9993",
+    "reports\\metrics.json": "cc2fd82d2f65e2ec626159ab4104a89be16e30407fdfe98945c428d908384673"
+  }
+}

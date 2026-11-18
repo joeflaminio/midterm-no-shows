@@ -48,3 +48,10 @@ It fits fold-specific models only and writes aggregate development evidence.
 Independent arithmetic checks every cost and tie choice; a toy test compares
 OOF costs against sklearn.cross_val_predict. Tests forbid final evaluation/output
 and check training-row isolation plus refusal to overwrite existing output.
+
+## Final authorized run completed
+
+See reports/final_results.md for the frozen-settings, once-only holdout evaluation,
+saved artifacts, verified metrics and limitations. It supersedes this report's
+historical statements that final model/evaluation remained pending. Training-only
+reproduction commands and development results above remain unchanged.
