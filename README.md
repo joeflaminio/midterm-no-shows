@@ -209,18 +209,21 @@ python -m pytest
 
 - The model only sees booking-time information. It cannot know about illness,
   weather, transport problems or anything the patient hasn't told the clinic.
-- It gives a probability, not a certainty: staff should treat it as a prompt,
-  not a verdict. It is wrong in both directions (297 unneeded calls and 74 missed
-  no-shows on the test set).
+- The balanced model produces uncalibrated probability scores, not verified
+  real-world percentages. Calibration has not been assessed, so staff should treat
+  the score as decision support, not a certainty. It is wrong in both directions
+  (297 unneeded calls and 74 missed no-shows on the test set).
 - The data is synthetic (4,000 generated appointments), so results may not match a
   real clinic.
 - The cost rule assumes every call makes the patient attend, which overstates the
   savings.
 - The page accepts some values the model never saw in training (for example ages
   12–15 or 93–110, lead times over 60 days), so predictions there are less reliable.
-- **How much to trust the savings:** with only 1,000 test appointments the exact
-  figures would shift on another sample. Resampling the test predictions (5,000
-  bootstrap samples) gives savings of roughly $1,950–$3,480 against calling nobody
-  and $950–$2,080 against calling everybody (95% ranges). Both ranges stay above
-  zero, so the model being cheaper is fairly solid, but the exact dollar amount is
-  not.
+- **How much to trust the savings:** a paired bootstrap of the 1,000 saved test
+  predictions (5,000 resamples, seed 42) gives 95% percentile intervals of about
+  $1,947–$3,474 savings versus calling nobody and $965–$2,056 versus calling
+  everybody. The method, runnable code and exact results are in
+  [the uncertainty check](reports/bootstrap_uncertainty.md). These intervals
+  describe sampling uncertainty for this fixed model and synthetic data under the
+  assumed cost rule. They do not establish real-clinic savings or account for
+  model-training uncertainty or calls failing to prevent missed visits.
