@@ -277,7 +277,7 @@ def project_interfaces():
 
 
 def main():
-    # Frozen final run; refuses any repeated holdout evaluation in this checkout.
+    # Reproduce approved frozen settings, never tune against the holdout.
     from noshows.finalize_training import main as finalize_main
 
     finalize_main()

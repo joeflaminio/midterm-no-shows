@@ -48,3 +48,59 @@ def test_reject_changed_frozen_settings(tmp_path):
     with pytest.raises(ValueError):
         final.finalize(tmp_path, toy_frame(), pd.DataFrame(), {"threshold": 0.5})
     assert not (tmp_path / "models").exists()
+
+
+def seed_reproduction(root):
+    (root / "reports").mkdir()
+    diagnostics = {
+        "threshold": 0.45,
+        "settings": {"C": 0.1, "solver": "lbfgs", "class_weight": "balanced"},
+        "honest_auc_mean": 0.7,
+        "leaky_auc_mean": 0.9,
+    }
+    (root / "reports/training_diagnostics.json").write_text(json.dumps(diagnostics))
+    pd.DataFrame({"model": ["toy"]}).to_csv(
+        root / "reports/training_cv_summary.csv", index=False
+    )
+
+
+def test_repeat_frozen_reproduction_preserves_original_audit(tmp_path, monkeypatch):
+    import subprocess
+
+    seed_reproduction(tmp_path)
+    marker = tmp_path / "reports/final_run_lock.json"
+    marker.write_text("original evaluation audit")
+    verification = tmp_path / "reports/final_verification.json"
+    verification.write_text("original verification audit")
+    monkeypatch.setattr(final, "make_appointments", lambda **_: toy_frame())
+
+    def no_git(*args, **kwargs):
+        raise AssertionError("Frozen reproduction must not execute Git")
+
+    monkeypatch.setattr(subprocess, "check_output", no_git)
+    monkeypatch.setenv("PATH", "")
+    first = final.reproduce(tmp_path)
+    original_model = (tmp_path / "models/no_show.joblib").read_bytes()
+    second = final.reproduce(tmp_path)
+    assert first == second
+    assert original_model == (tmp_path / "models/no_show.joblib").read_bytes()
+    assert marker.read_text() == "original evaluation audit"
+    assert verification.read_text() == "original verification audit"
+    assert not list(tmp_path.glob(".frozen-reproduction-*"))
+
+
+def test_failed_reproduction_leaves_existing_outputs(tmp_path, monkeypatch):
+    seed_reproduction(tmp_path)
+    (tmp_path / "models").mkdir()
+    model = tmp_path / "models/no_show.joblib"
+    model.write_bytes(b"original")
+    monkeypatch.setattr(final, "make_appointments", lambda **_: toy_frame())
+
+    def fail(*args, **kwargs):
+        raise RuntimeError("simulated fit failure")
+
+    monkeypatch.setattr(final, "finalize", fail)
+    with pytest.raises(RuntimeError, match="simulated"):
+        final.reproduce(tmp_path)
+    assert model.read_bytes() == b"original"
+    assert not list(tmp_path.glob(".frozen-reproduction-*"))

@@ -1,15 +1,16 @@
-"""Frozen, once-only final run; never select settings using the holdout."""
+"""Reproduce frozen final settings without selecting anything on the holdout."""
 
 import hashlib
 import json
-import shutil
+import os
+import tempfile
 from pathlib import Path
 
 import joblib
 import pandas as pd
 
 from noshows import pipeline, train
-from noshows.reproduce_training import load_generator
+from noshows.data import make_appointments
 
 FROZEN = {
     "model": "logistic_balanced",
@@ -97,22 +98,43 @@ def finalize(root, frame, comparison, diagnostics):
     return metrics
 
 
-def main():
-    root = Path(__file__).resolve().parents[1]
-    # Refuse before generating data if this checkout has already run.
-    if (root / "reports/final_run_lock.json").exists():
-        raise FileExistsError("Final run already started/completed; do not repeat")
+def reproduce(root):
+    """Regenerate outputs in staging; preserve original evaluation audit records.
+
+    Repeating a frozen computation is reproducibility, not model selection.
+    Each invocation predicts the holdout once; never tune using these results.
+    """
+    root = Path(root)
     diagnostics = json.loads((root / "reports/training_diagnostics.json").read_text())
     comparison = pd.read_csv(root / "reports/training_cv_summary.csv")
-    generator = load_generator(
-        root, shutil.which("git") or "C:/Program Files/Git/cmd/git.exe"
-    )
-    print(
-        json.dumps(
-            finalize(root, generator(n=4000, seed=11), comparison, diagnostics),
-            indent=2,
+    frame = make_appointments(n=4000, seed=FROZEN["seed"])
+    with tempfile.TemporaryDirectory(prefix=".frozen-reproduction-", dir=root) as temp:
+        stage = Path(temp)
+        metrics = finalize(stage, frame, comparison, diagnostics)
+        manifest = json.loads((stage / "reports/final_run_lock.json").read_text())
+        manifest["status"] = "frozen_reproduction_completed"
+        manifest["purpose"] = "Reproduction only; no model or threshold reselection"
+        (stage / "reports/reproduction_run.json").write_text(
+            json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
         )
-    )
+        # Publish only after successful computation. Each file replacement is atomic;
+        # the set of replacements is not a filesystem-wide transaction.
+        for name in [
+            "models/no_show.joblib",
+            "models/model_info.json",
+            "reports/cv_results.csv",
+            "reports/metrics.json",
+            "reports/final_predictions.csv",
+            "reports/reproduction_run.json",
+        ]:
+            destination = root / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(stage / name, destination)
+    return metrics
+
+
+def main():
+    print(json.dumps(reproduce(Path(__file__).resolve().parents[1]), indent=2))
 
 
 if __name__ == "__main__":
