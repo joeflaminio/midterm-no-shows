@@ -42,7 +42,7 @@ gradio app.py               # opens the page locally
 | Sahar   | Model comparison and training: `noshows/train.py`, cross-validation, GridSearchCV, leakage experiment, final evaluation, saved model and reports |
 | Vedant  | Cost rule and classes: `noshows/evaluation.py`, `noshows/appointment.py`, `noshows/predictor.py`, threshold selection, class tests |
 | Bibhash | App and Space: `app.py` (Gradio Blocks), public Hugging Face Space, page checks |
-| Sonam (GitHub: SonamTsheringHumber; commits appear as Sonamtshering21, same person) | Integration, tests and README: environment and config files, deployment tests, integration tests, integration reviews, fresh-clone check, README, demo coordination |
+| Sonam   | Integration, tests and README: environment and config files, deployment tests, integration tests, integration reviews, fresh-clone check, README, demo coordination |
 
 Every member committed from their own account. Most changes reached `main` through
 pull requests reviewed by two members. PR #1 (restoring the supplied age line in
