@@ -14,8 +14,8 @@ Git must be available. On Windows, if Git is not on PATH, add:
 
 The command reads the corrected supplied generator from commit
 `d061c41861006984fbe51760234ab3fc566b4688` using read-only `git show`, verifies its
-SHA256, and never changes the checkout, PR base or main. This is necessary while
-the draft branch still inherits the earlier generator from Joe's PR2.
+SHA256, and never changes the checkout, PR base or main. The pin preserves exact provenance; the draft now also includes the corrected
+generator from main after Joe's PR2 merged.
 Missing commit objects or a hash mismatch stop the run; fetch main as above.
 No network download or code installation is performed by the Python command.
 
@@ -46,7 +46,7 @@ values and population-standard-deviation reporting.
 
 Local Python3.11 matches environment.yml. README Space settings and deployment
 tests specify Python3.12; actual deployment/runtime parity remains unverified.
-Joe PR2 must merge before retargeting/integrating main. Vedant's evaluation,
+Joe PR2 has merged and main has been integrated into this draft. Vedant's evaluation,
 Appointment and predictor code remain dependencies. Final threshold, leakage
 results, model files, final holdout evaluation and deployment checks remain
 pending. Model-selection CV estimates are not unbiased final performance.

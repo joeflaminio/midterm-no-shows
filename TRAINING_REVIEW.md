@@ -2,8 +2,8 @@
 This is Sahar's course-aligned training orchestration, not a finished submission.
 
 ## Dependencies before merge / final execution
-- Joe's PR #2 provides `noshows.pipeline`. Reviewed head: 473e58f98651582b1fbdc1fdd08e2fb3e436a992.
-- Vedant's actual evaluation module is not present in the checked repository. The final entrypoint currently expects `noshows.evaluation.total_cost(y_true, calls)` and `choose_threshold(y_true, probabilities, thresholds)`. These are provisional integration signatures, not instructor requirements.
+- Joe's merged PR #2 provides `noshows.pipeline`. Reviewed head: 473e58f98651582b1fbdc1fdd08e2fb3e436a992.
+- Vedant's evaluation module is available on a separate feature branch but has not yet been integrated or verified here. The final entrypoint currently expects `noshows.evaluation.total_cost(y_true, calls)` and `choose_threshold(y_true, probabilities, thresholds)`. These are provisional integration signatures, not instructor requirements.
 - Tests use clearly labelled toy cost/threshold functions, not substitutes presented as Vedant's work.
 - Coordinate model metadata/output filenames with prediction and deployment code.
 - Do not merge as a finished application or claim generated model/metrics exist.
