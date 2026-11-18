@@ -83,13 +83,14 @@ Everyone wrote code, tested their own work and reviewed others' pull requests
 | booking | online, phone, front_desk | TODO (Vedant) |
 | insurance | private, provincial, self_pay | TODO (Vedant) |
 | treatment | physio, massage, acupuncture | TODO (Vedant) |
-
+| Feature Selection (Role 1) | Selected numeric (`lead_days`, `age`, `prior_no_shows`, `hour`, `first_visit`, `distance_km`) and categorical (`weekday`, `booking`, `insurance`, `treatment`) features available at booking time. | TODO (Joe) |
+| Excluded Columns (Role 1) | Excluded `appointment_id` (no predictive signal) and `fee_charged` (to prevent data leakage, as fees are only incurred after a missed visit). | TODO (Joe) |
 Unknown categories (for example `onlne`) are rejected by `Appointment` with the
 field named. The encoder also uses `handle_unknown="ignore"` so it can never crash.
 TODO (Vedant): note which numeric fields accept decimals.
 
 Data split: 75% train (3,000 rows) / 25% test (1,000 rows), stratified on `no_show`,
-seed TODO (Joe). The test set was used once, after every choice was fixed.
+seed 11 (Joe). The test set was used once, after every choice was fixed.
 
 ## Model comparison
 
