@@ -104,3 +104,39 @@ def test_failed_reproduction_leaves_existing_outputs(tmp_path, monkeypatch):
         final.reproduce(tmp_path)
     assert model.read_bytes() == b"original"
     assert not list(tmp_path.glob(".frozen-reproduction-*"))
+
+
+def test_reproduction_requires_no_cached_reports(tmp_path, monkeypatch):
+    monkeypatch.setattr(final, "make_appointments", lambda **_: toy_frame())
+    metrics = final.reproduce(tmp_path)
+    assert metrics["test_size"] == 30
+    assert len(pd.read_csv(tmp_path / "reports/cv_results.csv")) == 4
+    assert len(pd.read_csv(tmp_path / "reports/reproduced_leakage_folds.csv")) == 5
+    info = json.loads((tmp_path / "models/model_info.json").read_text())
+    assert info["threshold"] == 0.45
+    assert info["best_settings"] == {"model__C": 0.1, "model__solver": "lbfgs"}
+    manifest = json.loads((tmp_path / "reports/reproduction_run.json").read_text())
+    assert manifest["training_evidence_recomputed"]
+
+
+def test_training_evidence_excludes_reserved_rows(monkeypatch):
+    frame = toy_frame()
+    x_train, _, _, _ = final.pipeline.split_data(frame)
+    seen = []
+    compare = train.compare_models
+    analyze = final.training_diagnostics.analyze
+
+    def checked_compare(x, y, api, cv):
+        assert x.index.equals(x_train.index)
+        seen.append("cv")
+        return compare(x, y, api, cv)
+
+    def checked_analyze(data):
+        assert data.index.equals(x_train.index)
+        seen.append("leakage")
+        return analyze(data)
+
+    monkeypatch.setattr(train, "compare_models", checked_compare)
+    monkeypatch.setattr(final.training_diagnostics, "analyze", checked_analyze)
+    final.training_evidence(frame)
+    assert seen == ["cv", "leakage"]

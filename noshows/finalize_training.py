@@ -8,8 +8,9 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold
 
-from noshows import pipeline, train
+from noshows import pipeline, train, training_diagnostics
 from noshows.data import make_appointments
 
 FROZEN = {
@@ -98,6 +99,21 @@ def finalize(root, frame, comparison, diagnostics):
     return metrics
 
 
+def training_evidence(frame):
+    """Recompute reports from training rows; never revise approved decisions."""
+    x_train, x_test, y_train, y_test = pipeline.split_data(frame)
+    training = frame.loc[x_train.index].copy()
+    del x_test, y_test
+    cv = StratifiedKFold(5, shuffle=True, random_state=FROZEN["seed"])
+    comparison = train.compare_models(x_train, y_train, train.project_interfaces(), cv)
+    costs, folds, diagnostics = training_diagnostics.analyze(training)
+    # Recomputed training diagnostic minimum is evidence only, never a new choice.
+    diagnostics["diagnostic_cost_minimizer"] = diagnostics["threshold"]
+    diagnostics["threshold"] = FROZEN["threshold"]
+    diagnostics["selection_frozen"] = True
+    return comparison, diagnostics, costs, folds
+
+
 def reproduce(root):
     """Regenerate outputs in staging; preserve original evaluation audit records.
 
@@ -105,14 +121,17 @@ def reproduce(root):
     Each invocation predicts the holdout once; never tune using these results.
     """
     root = Path(root)
-    diagnostics = json.loads((root / "reports/training_diagnostics.json").read_text())
-    comparison = pd.read_csv(root / "reports/training_cv_summary.csv")
     frame = make_appointments(n=4000, seed=FROZEN["seed"])
+    comparison, diagnostics, costs, folds = training_evidence(frame)
     with tempfile.TemporaryDirectory(prefix=".frozen-reproduction-", dir=root) as temp:
         stage = Path(temp)
         metrics = finalize(stage, frame, comparison, diagnostics)
+        costs.to_csv(stage / "reports/reproduced_threshold_costs.csv", index=False)
+        folds.to_csv(stage / "reports/reproduced_leakage_folds.csv", index=False)
         manifest = json.loads((stage / "reports/final_run_lock.json").read_text())
         manifest["status"] = "frozen_reproduction_completed"
+        manifest["training_evidence_recomputed"] = True
+        manifest["training_diagnostics"] = diagnostics
         manifest["purpose"] = "Reproduction only; no model or threshold reselection"
         (stage / "reports/reproduction_run.json").write_text(
             json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
@@ -126,6 +145,8 @@ def reproduce(root):
             "reports/metrics.json",
             "reports/final_predictions.csv",
             "reports/reproduction_run.json",
+            "reports/reproduced_threshold_costs.csv",
+            "reports/reproduced_leakage_folds.csv",
         ]:
             destination = root / name
             destination.parent.mkdir(parents=True, exist_ok=True)

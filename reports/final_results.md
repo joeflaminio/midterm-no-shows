@@ -73,3 +73,10 @@ and latest-commit reviews remain pending. README still has team-owned draft/TODO
 sections; this report is the authoritative new result, superseding earlier reports'
 statements that final model and holdout evaluation were pending. No PR merge or
 teammate implementation change was performed.
+
+Current report-generation correction: the final command now recomputes training
+CV, OOF cost and leakage evidence instead of reading cached training reports.
+44 focused tests pass, including full toy execution with no cached reports.
+The actual training-only stage matches all previously recorded values exactly;
+no further real holdout prediction was done. See
+reports/training_regeneration_verification.json for precise verification scope.

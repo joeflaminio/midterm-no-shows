@@ -74,8 +74,8 @@ python -m noshows.train
 
 It imports the committed supplied generator normally, uses only approved frozen
 balanced LR C=0.1/lbfgs and threshold0.45, and regenerates the fitted pipeline,
-metadata, metrics and predictions. It does not redo selection. Training CV values
-are copied from previously verified training evidence. Outputs are staged before
+metadata, metrics and predictions. It does not redo selection. Training CV, OOF cost and leakage evidence are recomputed from training rows
+on every invocation; no cached report inputs are needed. Outputs are staged before
 replacement; original final evaluation audit records are preserved. No Git
 executable or historical Git object is required for this final command.
 The older training-only reproduction helper retains its explicit provenance pin.
@@ -86,3 +86,23 @@ original exactly. 49 focused/toy/artifact tests and Ruff passed there. See
 frozen_reproduction_verification.json. No second model/threshold selection or
 change to original final artifacts occurred. A fresh environment install and
 complete app/Space verification remain outside this check.
+
+## Fresh training report regeneration
+
+The current final command does not read training_cv_summary.csv or
+training_diagnostics.json as required inputs. It recomputes four-model five-fold
+training CV, frozen-model training OOF cost diagnostics and paired leakage folds.
+The approved production model/settings/threshold remain fixed, regardless of the
+recomputed diagnostic cost minimizer. It writes fresh cv_results.csv, metrics.json,
+model artifacts, reproduced_threshold_costs.csv, reproduced_leakage_folds.csv and
+reproduction_run.json; original evaluation audit records remain untouched.
+
+44 focused tests passed, including a full toy reproduction with an initially empty
+output directory, repeated existing outputs without Git, failure preservation and
+training-index isolation. The current real-data training stage exactly matched
+recorded CV values, all 19 cost rows and all five paired leakage folds, with final
+evaluation and saving functions replaced by raising guards. No extra real holdout
+prediction was performed for this change. See training_regeneration_verification.json.
+The earlier clean-source real frozen reproduction remains valid evidence for the
+unchanged downstream fit/evaluation stage, not a claim of another full real-data
+run after this report-generation change. Full app/Space checks remain pending.

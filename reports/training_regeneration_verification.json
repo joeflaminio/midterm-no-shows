@@ -1,0 +1,10 @@
+{
+  "scope": "Current report-regeneration code validated on training rows only; final evaluation/output functions replaced with raising guards",
+  "training_rows": 3000,
+  "cv_summary_matches_recorded": true,
+  "all_19_cost_rows_match": true,
+  "all_five_paired_leakage_folds_match": true,
+  "frozen_threshold": 0.45,
+  "holdout_evaluations_this_check": 0,
+  "note": "Earlier source-archive frozen reproduction verified downstream outputs at b5329ce. Current no-cached-report end-to-end path verified with toy data, not another actual holdout run."
+}
