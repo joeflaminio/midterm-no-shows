@@ -1,0 +1,26 @@
+{
+  "code_commit": "b5329ce",
+  "method": "git archive of committed source, no .git directory, tracked final artifacts already present; ran python -m noshows.train in Windows Conda once",
+  "reproduction_runs_on_course_holdout": 1,
+  "model_or_threshold_reselected": false,
+  "checks": {
+    "models/no_show.joblib": "identical binary SHA256",
+    "models/model_info.json": "exact values match",
+    "reports/metrics.json": "exact values match",
+    "reports/final_predictions.csv": "exact values match",
+    "reports/cv_results.csv": "exact values match",
+    "reports/final_run_lock.json": "exact values match",
+    "reports/final_verification.json": "exact values match"
+  },
+  "original_artifacts_preserved": true,
+  "original_working_copy_sha256": {
+    "models/no_show.joblib": "123503b54029324b86d28662058eb8256a7e1769d57ef8788a188473b2aa9342",
+    "models/model_info.json": "fa861e6d8b7294d6566862482d612e2b24a4805f737432dec3c3e6ca3d26f29f",
+    "reports/metrics.json": "cc2fd82d2f65e2ec626159ab4104a89be16e30407fdfe98945c428d908384673",
+    "reports/final_predictions.csv": "22baabfeb8c18932946e9f84286f91ddfc4ef8cadb0a6c09baa63ef1d3aa9993",
+    "reports/cv_results.csv": "d9106cee99fc9c994ea8a342a9f71da29f287dd8f9f9cf52748e24c0c480dea7",
+    "reports/final_run_lock.json": "e1b994e1b8b2e7d8ba8462f5c38e6145b48187fd987f232bd135818fdb42acad",
+    "reports/final_verification.json": "cc0c93f804b55855ec144238d71b3df9ef43a8babbe53084cf263c53c08f68f7"
+  },
+  "scope": "Frozen-computation reproducibility check; no fresh environment installation, full app or Space verification."
+}

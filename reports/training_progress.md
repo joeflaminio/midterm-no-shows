@@ -55,3 +55,8 @@ See reports/final_results.md for the frozen-settings, once-only holdout evaluati
 saved artifacts, verified metrics and limitations. It supersedes this report's
 historical statements that final model/evaluation remained pending. Training-only
 reproduction commands and development results above remain unchanged.
+
+Portable frozen reproduction is now verified separately; the guard no longer
+blocks the required command on fresh source copies. See reports/final_results.md
+and reports/frozen_reproduction_verification.json. The original holdout metrics
+and artifacts did not change, and no model/threshold was reselected.

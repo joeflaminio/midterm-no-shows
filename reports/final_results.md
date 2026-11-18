@@ -52,14 +52,22 @@ call=True). This was not a holdout row or a full class/app/deployment pass.
 
 ## Reproduction and remaining work
 
-python -m noshows.train now uses the frozen finalization entrypoint, not a new
-model/threshold search. It refuses if final outputs or the run marker already
-exist, preventing an accidental repeated holdout evaluation. Keep those records;
-do not delete them to rerun or tune against the observed holdout. Training-only
-reproduction remains available through reproduce_training and training_diagnostics.
-An independently authorized clean reproduction would need a separately prepared
-output context; no such second evaluation was done here.
+python -m noshows.train now reproduces the approved frozen model and threshold
+using a normal import from noshows.data. It does not require Git, a historical
+commit or a Windows path. Existing generated outputs are replaced only after a
+successful staged computation; each file replacement is atomic, not the entire
+multi-file operation. The original final_run_lock.json and final_verification.json
+remain audit records and no longer block reproducibility. New invocations record
+reports/reproduction_run.json. No model search or threshold reselection occurs.
 
+One additional frozen reproduction was explicitly authorized and completed in a
+separate clean source archive with no .git directory and all tracked artifacts
+already present. Its model binary was identical; metadata, predictions, metrics
+and CV values matched exactly. Original working-copy artifacts remained unchanged.
+49 focused/synthetic/artifact tests passed in that archive and Ruff passed.
+This supersedes the earlier repeat-blocking guard. See
+reports/frozen_reproduction_verification.json. This verifies source portability
+and frozen computation, not a newly installed environment or deployed application.
 Team application/class integration, full fresh-clone/deployment tests, public Space
 and latest-commit reviews remain pending. README still has team-owned draft/TODO
 sections; this report is the authoritative new result, superseding earlier reports'

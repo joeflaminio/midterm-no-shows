@@ -62,3 +62,27 @@ Finalization has now been completed once with approved settings. See
 reports/final_results.md. The final train entrypoint is guarded against repeats;
 training-only reproduction remains safe. Do not remove final_run_lock.json or
 final outputs to repeat evaluation without separate authorization.
+
+## Portable frozen final reproduction (current behavior)
+
+The repeat-blocking guard described above has been replaced. From a clean source
+copy or existing checkout, in the course Conda environment, run:
+
+```bash
+python -m noshows.train
+```
+
+It imports the committed supplied generator normally, uses only approved frozen
+balanced LR C=0.1/lbfgs and threshold0.45, and regenerates the fitted pipeline,
+metadata, metrics and predictions. It does not redo selection. Training CV values
+are copied from previously verified training evidence. Outputs are staged before
+replacement; original final evaluation audit records are preserved. No Git
+executable or historical Git object is required for this final command.
+The older training-only reproduction helper retains its explicit provenance pin.
+
+Verified once in a separate clean source archive with no Git directory and existing
+tracked model/metadata/lock. All model bytes and numerical results matched the
+original exactly. 49 focused/toy/artifact tests and Ruff passed there. See
+frozen_reproduction_verification.json. No second model/threshold selection or
+change to original final artifacts occurred. A fresh environment install and
+complete app/Space verification remain outside this check.
