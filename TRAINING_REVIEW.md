@@ -14,5 +14,8 @@ Majority-class DummyClassifier baseline; balanced logistic regression, decision 
 ## Test safety
 Tests use invented toy rows. No course-generator data or actual final holdout is used.
 `python -m noshows.train` is the eventual final-output command and evaluates the holdout: DO NOT run it while developing or deciding models.
-Runtime verification used existing Conda Python 3.11 on Sahar's Windows computer; deployment Python-version parity still needs verification.
+Runtime verification used existing Conda Python 3.11, matching environment.yml. README Space settings and deployment tests specify Python 3.12; actual cross-runtime/deployment parity is not yet verified.
 The small integration test imports the shared pipeline normally and has no machine-specific paths.
+
+## Training-only reproduction
+See [reports/REPRODUCIBILITY.md](reports/REPRODUCIBILITY.md) for the portable, non-overwriting development command and its verified numerical comparison. No final holdout evaluation has been run.

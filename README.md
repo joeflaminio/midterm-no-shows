@@ -12,6 +12,12 @@ pinned: false
 
 # Maple Physio no-show check
 
+> Development draft: app/class/threshold integration and final model/test results
+> remain pending. The run and deployment sections below describe the intended
+> completed workflow, not a verified working deployment. For current training-only
+> results and safe reproduction, see reports/training_progress.md and
+> reports/REPRODUCIBILITY.md.
+
 ## What it does
 
 Missed appointments cost Maple Physio money. This page estimates the chance that a
@@ -42,8 +48,9 @@ gradio app.py               # opens the page locally
 | Bibhash | App and Space: `app.py` (Gradio Blocks), public Hugging Face Space, page checks |
 | Sonam   | Integration, tests and README: environment and config files, deployment tests, fresh-clone check, README, demo coordination |
 
-Everyone wrote code, tested their own work and reviewed others' pull requests
-(at least two reviewers per merge).
+Each member must write code, test their work and review others' pull requests.
+At least two reviewers are required per merge; verify contribution/review records
+before claiming this requirement is complete.
 
 ## Decisions
 
@@ -89,7 +96,8 @@ field named. The encoder also uses `handle_unknown="ignore"` so it can never cra
 TODO (Vedant): note which numeric fields accept decimals.
 
 Data split: 75% train (3,000 rows) / 25% test (1,000 rows), stratified on `no_show`,
-seed TODO (Joe). The test set was used once, after every choice was fixed.
+seed 11. The final test set has not been evaluated. Reserve its evaluation until
+every choice is fixed.
 
 ## Model comparison
 
