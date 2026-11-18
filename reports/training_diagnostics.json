@@ -1,0 +1,36 @@
+{
+  "training_rows": 3000,
+  "threshold": 0.45,
+  "oof_cost": 18921,
+  "call_nobody_cost": 27475,
+  "call_everybody_cost": 24000,
+  "honest_auc_mean": 0.7274517979612083,
+  "honest_auc_std": 0.011750961674137089,
+  "leaky_auc_mean": 0.9231585455277422,
+  "leaky_auc_std": 0.00640202054862252,
+  "folds": 5,
+  "std_ddof": 0,
+  "seed": 11,
+  "selected_model": "logistic_balanced",
+  "settings": {
+    "C": 0.1,
+    "solver": "lbfgs",
+    "class_weight": "balanced"
+  },
+  "holdout_evaluated": false,
+  "final_model_saved": false,
+  "scope": "training-only development; OOF cost is selection evidence, not unbiased final performance",
+  "caution": "Model/settings were selected with the same training folds. Leakage deliberately adds post-outcome fee_charged only to the diagnostic pipeline. Assumes every call prevents a no-show.",
+  "generator_commit": "d061c41861006984fbe51760234ab3fc566b4688",
+  "generator_sha256": "44e53ed91977d764f16c7fc5e8a2204eee58de1b3e35dc47ae2bdebeae0e99f2",
+  "python": "3.11.18 | packaged by conda-forge | (main, Oct 26 2026, 11:29:07) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.4.6",
+  "pandas": "3.1.1",
+  "sklearn": "1.9.1",
+  "source_sha256": {
+    "noshows/pipeline.py": "21d47c61b1b0215c18d558aa80ca4b05588fce0c083d4910876602ce9db4b2ce",
+    "noshows/evaluation.py": "eb5c63a0c0bcd23f149221ec18cbb673d2c1923a01a13821c4e977d4e22f2478",
+    "noshows/train.py": "05dd80460e45263030ddc08d2d2cd0d5da547f2957236908a823c1a916eb157b",
+    "noshows/training_diagnostics.py": "587bc0c08ce08ee00348bb02ce2cb35dd4e5ae1c87dc037accce40bdde865343"
+  }
+}
