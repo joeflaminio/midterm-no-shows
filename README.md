@@ -176,3 +176,18 @@ python -m pytest
 - The cost rule assumes every call makes the patient attend, which overstates savings.
 - With only 1,000 test appointments, the cost difference has real uncertainty;
   TODO (Sahar): how much to trust the savings.
+
+## Data & Pipeline Decisions (Role 1)
+
+### Feature Selection & Exclusions
+* **Target Variable**: `no_show` (binary indicator for missed visits).
+* **Selected Features**:
+  * **Numeric (`lead_days`, `age`, `prior_no_shows`, `hour`, `first_visit`, `distance_km`)**: Captures scheduling lead time, patient demographics, historical attendance, time of day, and travel distance available at booking.
+  * **Categorical (`weekday`, `booking`, `insurance`, `treatment`)**: Captures day-of-week patterns, booking channels, payment structures, and appointment types.
+* **Excluded Columns**:
+  * `appointment_id`: Arbitrary identifier with no predictive signal.
+  * `fee_charged`: Excluded from the normal prediction features to prevent **data leakage**, as fees are only incurred after a missed visit (retained separately for the leakage experiment).
+
+### Data Splitting & Reproducibility
+* **Random Seed (`SEED = 11`)**: Used across both the data generator (`make_appointments(n=4000, seed=11)`) and the train/test split (`random_state=11`) to ensure fully deterministic, reproducible splits across the entire team's environment.
+* **Split Strategy**: Stratified 75/25 train/test split preserving the original class distribution.
