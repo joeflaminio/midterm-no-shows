@@ -81,9 +81,20 @@ EXAMPLE_BOOKINGS = [
 EXAMPLES = [[booking[name] for name in FIELD_NAMES] for booking in EXAMPLE_BOOKINGS]
 
 
+def as_whole_number(value):
+    """Gradio sends every number as a float, so 12 arrives as 12.0. Turn whole
+    numbers back into int, and leave everything else for Appointment to judge."""
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
+
+
 def check_booking(*values):
     """Check one booking with Appointment, then score it with NoShowPredictor."""
-    booking = dict(zip(FIELD_NAMES, values, strict=True))
+    booking = {
+        name: as_whole_number(value)
+        for name, value in zip(FIELD_NAMES, values, strict=True)
+    }
     try:
         appointment = Appointment(**booking)
     except ValueError as error:
@@ -95,17 +106,17 @@ def check_booking(*values):
             "the training data, so treat this chance as less certain."
         )
 
-    result = PREDICTOR.predict(appointment)
-    chances = {"No-show": result.probability, "Comes": 1 - result.probability}
-    if result.call:
+    probability, call = PREDICTOR.predict(appointment)
+    chances = {"No-show": probability, "Comes": 1 - probability}
+    if call:
         action = (
             f"Call the patient the day before. The chance of a no-show "
-            f"({result.probability:.0%}) is at or above the clinic's call "
+            f"({probability:.0%}) is at or above the clinic's call "
             f"threshold of {PREDICTOR.threshold:.0%}."
         )
     else:
         action = (
-            f"No call needed. The chance of a no-show ({result.probability:.0%}) "
+            f"No call needed. The chance of a no-show ({probability:.0%}) "
             f"is below the clinic's call threshold of {PREDICTOR.threshold:.0%}."
         )
     return chances, action

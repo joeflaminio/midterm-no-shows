@@ -51,6 +51,8 @@ def test_valid_booking_shows_chance_and_action():
         ("hour", 20),
         ("distance_km", 0),
         ("age", None),
+        ("lead_days", 7.5),
+        ("first_visit", 2),
         ("booking", "onlne"),
         ("weekday", "sat"),
     ],
@@ -58,6 +60,13 @@ def test_valid_booking_shows_chance_and_action():
 def test_bad_input_shows_a_clear_error_naming_the_field(field, bad_value):
     with pytest.raises(gr.Error, match=field):
         app.check_booking(*page_values(**{field: bad_value}))
+
+
+def test_whole_numbers_typed_on_the_page_are_accepted():
+    # Gradio sends 10 as 10.0; the page must still accept it.
+    as_floats = {name: float(VALID[name]) for name in NUMBER_LIMITS}
+    chances, _ = app.check_booking(*page_values(**as_floats))
+    assert 0 <= chances["No-show"] <= 1
 
 
 def test_blank_distance_is_scored_with_a_warning():
