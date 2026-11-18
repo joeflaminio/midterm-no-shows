@@ -93,22 +93,34 @@ seed TODO (Joe). The test set was used once, after every choice was fixed.
 
 ## Model comparison
 
-Five-fold stratified cross-validation on the training data only
-(mean ± standard deviation). Source: `reports/cv_results.csv`.
+Five-fold stratified cross-validation on the 3,000 training rows only (seed 11),
+mean ± standard deviation across folds. Preprocessing stays inside the shared
+pipeline, so each fold is prepared using only its own training part.
+Source: `reports/cv_results.csv`.
 
 | Model | Precision | Recall | F1 | ROC-AUC | Accuracy |
 |-------|-----------|--------|----|---------|----------|
-| DummyClassifier | TODO | TODO | TODO | TODO | TODO |
-| TODO (Sahar) | TODO | TODO | TODO | TODO | TODO |
-| TODO (Sahar, class_weight="balanced") | TODO | TODO | TODO | TODO | TODO |
-| TODO (Sahar) | TODO | TODO | TODO | TODO | TODO |
+| DummyClassifier (most frequent) | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.500 ± 0.000 | 0.738 ± 0.000 |
+| Logistic regression (class_weight="balanced") | 0.422 ± 0.011 | 0.660 ± 0.031 | 0.515 ± 0.015 | 0.727 ± 0.012 | 0.675 ± 0.009 |
+| Decision tree | 0.344 ± 0.023 | 0.387 ± 0.018 | 0.364 ± 0.015 | 0.562 ± 0.014 | 0.645 ± 0.021 |
+| Random forest (100 trees) | 0.564 ± 0.051 | 0.206 ± 0.031 | 0.302 ± 0.040 | 0.696 ± 0.008 | 0.751 ± 0.010 |
 
-Why accuracy alone misleads: TODO (Sahar).
+**Why accuracy alone misleads:** about 26% of appointments are no-shows, so the
+baseline that predicts "attends" for everyone reaches 73.8% accuracy while finding
+zero no-shows (recall 0). The random forest has the highest accuracy (75.1%) but
+finds only about one in five no-shows. For this clinic, missing a no-show is the
+expensive mistake, so we compared models on F1, chosen before seeing results.
 
-Tuning: GridSearchCV over TODO parameters (TODO combinations), scored on TODO.
-Did tuning beat the fold-to-fold variation? TODO (Sahar).
+**Tuning:** GridSearchCV on the leading model, balanced logistic regression, over
+two settings and six combinations: `C` in {0.1, 1, 10} and `solver` in
+{liblinear, lbfgs}, scored on F1. The best combination (`C=0.1`, `lbfgs`) reached
+F1 0.517 ± 0.013, a gain of 0.002 over the untuned model. That is much smaller
+than the fold-to-fold standard deviation (0.015), so tuning did not meaningfully
+improve the model.
 
-Selected model: TODO (Sahar) — reason.
+**Selected model:** balanced logistic regression. It had the best F1 and the best
+ROC-AUC (0.727), so it ranks risk best and finds about two thirds of no-shows,
+and its results were stable across folds.
 
 Threshold: TODO (Vedant), chosen from 0.05–0.95 using out-of-fold training
 probabilities to minimise cost. Stored in `models/model_info.json`; the app reads
