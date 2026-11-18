@@ -21,6 +21,8 @@ patient attend.
 
 Public Space: https://huggingface.co/spaces/bibhashdas/midterm-no-shows
 
+Demo recording: https://drive.google.com/file/d/1katPTfgLjWjpPVQWGPum-s6YIgtWV9Jt/view?usp=share_link
+
 Enter a booking and the page shows the chance of a no-show and a plain action
 (call or no call). Invalid entries get a message naming the field to fix; a blank
 distance is accepted with a warning.
