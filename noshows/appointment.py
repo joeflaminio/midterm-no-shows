@@ -1,13 +1,33 @@
 """Validated, immutable appointment data for no-show prediction."""
 
 from dataclasses import dataclass
-from numbers import Integral, Real
+from numbers import Real
 
 import pandas as pd
+
+from noshows.pipeline import ALL_FEATURES
+
+NUMBER_LIMITS = {
+    "lead_days": (0, 120),
+    "age": (12, 110),
+    "prior_no_shows": (0, 30),
+    "hour": (8, 17),
+    "first_visit": (0, 1),
+    "distance_km": (0.1, 150),
+}
+
+CATEGORY_CHOICES = {
+    "weekday": ("mon", "tue", "wed", "thu", "fri"),
+    "booking": ("online", "phone", "front_desk"),
+    "insurance": ("private", "provincial", "self_pay"),
+    "treatment": ("physio", "massage", "acupuncture"),
+}
 
 
 @dataclass(frozen=True)
 class Appointment:
+    """Validated appointment information for model predictions."""
+
     lead_days: int
     age: int
     prior_no_shows: int
@@ -19,63 +39,54 @@ class Appointment:
     insurance: str
     treatment: str
 
-    def __post_init__(self):
-        integer_ranges = {
-            "lead_days": (0, 120),
-            "age": (12, 110),
-            "prior_no_shows": (0, 30),
-            "hour": (8, 17),
-            "first_visit": (0, 1),
-        }
-
-        for field, (minimum, maximum) in integer_ranges.items():
+    def __post_init__(self) -> None:
+        for field, (minimum, maximum) in NUMBER_LIMITS.items():
             value = getattr(self, field)
-            if (
-                isinstance(value, bool)
-                or not isinstance(value, Integral)
-                or not minimum <= value <= maximum
-            ):
-                raise ValueError(
-                    f"{field} must be an integer between {minimum} and {maximum}"
+
+            if field == "distance_km" and value is None:
+                continue
+
+            if field == "distance_km":
+                valid = (
+                    isinstance(value, Real)
+                    and not isinstance(value, bool)
+                    and minimum <= value <= maximum
+                )
+            else:
+                valid = (
+                    isinstance(value, Real)
+                    and not isinstance(value, bool)
+                    and minimum <= value <= maximum
+                    and float(value).is_integer()
                 )
 
-        distance = self.distance_km
-        if distance is not None:
-            if (
-                isinstance(distance, bool)
-                or not isinstance(distance, Real)
-                or not 0.1 <= distance <= 150
-            ):
-                raise ValueError("distance_km must be between 0.1 and 150, or None")
-
-        allowed_categories = {
-            "weekday": {"mon", "tue", "wed", "thu", "fri"},
-            "booking": {"online", "phone", "front_desk"},
-            "insurance": {"private", "provincial", "self_pay"},
-            "treatment": {"physio", "massage", "acupuncture"},
-        }
-
-        for field, allowed in allowed_categories.items():
-            if getattr(self, field) not in allowed:
+            if not valid:
                 raise ValueError(
-                    f"{field} must be one of: {', '.join(sorted(allowed))}"
+                    f"{field} must be from {minimum} to {maximum} (got {value!r})"
                 )
+
+            if field != "distance_km":
+                object.__setattr__(self, field, int(value))
+
+        for field, choices in CATEGORY_CHOICES.items():
+            value = getattr(self, field)
+
+            if not isinstance(value, str) or value not in choices:
+                raise ValueError(f"{field} must be one of {choices} (got {value!r})")
 
     def to_frame(self) -> pd.DataFrame:
-        """Return one row with the exact model feature columns."""
-        return pd.DataFrame(
-            [
-                {
-                    "lead_days": self.lead_days,
-                    "age": self.age,
-                    "prior_no_shows": self.prior_no_shows,
-                    "hour": self.hour,
-                    "first_visit": self.first_visit,
-                    "distance_km": self.distance_km,
-                    "weekday": self.weekday,
-                    "booking": self.booking,
-                    "insurance": self.insurance,
-                    "treatment": self.treatment,
-                }
-            ]
-        )
+        """Return a single-row DataFrame in training feature order."""
+        values = {
+            "lead_days": self.lead_days,
+            "age": self.age,
+            "prior_no_shows": self.prior_no_shows,
+            "hour": self.hour,
+            "first_visit": self.first_visit,
+            "distance_km": self.distance_km,
+            "weekday": self.weekday,
+            "booking": self.booking,
+            "insurance": self.insurance,
+            "treatment": self.treatment,
+        }
+
+        return pd.DataFrame([values], columns=ALL_FEATURES)

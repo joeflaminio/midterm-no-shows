@@ -148,3 +148,25 @@ def test_predictor_repr(predictor_files):
 
     assert "NoShowPredictor" in repr(predictor)
     assert "threshold=0.50" in repr(predictor)
+
+
+def test_prediction_has_named_fields(predictor_files, appointment):
+    """Gradio can access prediction.probability and prediction.call."""
+    from noshows.predictor import Prediction
+
+    predictor = NoShowPredictor(*predictor_files)
+    result = predictor.predict(appointment)
+
+    assert isinstance(result, Prediction)
+    assert result.probability == pytest.approx(0.5)
+    assert result.call is True
+
+
+def test_default_model_paths_are_project_relative():
+    """Default paths must work regardless of the current directory."""
+    from noshows.predictor import PROJECT_ROOT
+
+    assert NoShowPredictor.__init__.__defaults__ == (None, None)
+
+    assert (PROJECT_ROOT / "models" / "no_show.joblib").is_absolute()
+    assert (PROJECT_ROOT / "models" / "model_info.json").is_absolute()

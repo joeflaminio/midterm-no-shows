@@ -2,10 +2,20 @@
 
 import json
 from pathlib import Path
+from typing import NamedTuple
 
 import joblib
 
 from noshows.appointment import Appointment
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+class Prediction(NamedTuple):
+    """A predicted no-show probability and call recommendation."""
+
+    probability: float
+    call: bool
 
 
 class NoShowPredictor:
@@ -13,16 +23,22 @@ class NoShowPredictor:
 
     def __init__(
         self,
-        model_path: str | Path = "models/no_show.joblib",
-        info_path: str | Path = "models/model_info.json",
+        model_path: str | Path | None = None,
+        info_path: str | Path | None = None,
     ):
-        self.model_path = Path(model_path)
-        self.info_path = Path(info_path)
+        self.model_path = (
+            Path(model_path)
+            if model_path is not None
+            else PROJECT_ROOT / "models" / "no_show.joblib"
+        )
+        self.info_path = (
+            Path(info_path)
+            if info_path is not None
+            else PROJECT_ROOT / "models" / "model_info.json"
+        )
 
-        # Load the trained model once when creating the predictor.
         self.model = joblib.load(self.model_path)
 
-        # Read the threshold from saved training metadata.
         with self.info_path.open(encoding="utf-8") as file:
             metadata = json.load(file)
 
@@ -31,8 +47,8 @@ class NoShowPredictor:
         if not 0 <= self.threshold <= 1:
             raise ValueError("threshold must be between 0 and 1")
 
-    def predict(self, appointment: Appointment) -> tuple[float, bool]:
-        """Return (no-show probability, should-call decision)."""
+    def predict(self, appointment: Appointment) -> Prediction:
+        """Return the probability and threshold-based call decision."""
         if not isinstance(appointment, Appointment):
             raise TypeError("appointment must be an Appointment instance")
 
@@ -40,7 +56,7 @@ class NoShowPredictor:
         probability = float(self.model.predict_proba(frame)[0, 1])
         should_call = probability >= self.threshold
 
-        return probability, bool(should_call)
+        return Prediction(probability=probability, call=bool(should_call))
 
     def __repr__(self) -> str:
         return (
