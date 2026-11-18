@@ -42,10 +42,13 @@ gradio app.py               # opens the page locally
 | Sahar   | Model comparison and training: `noshows/train.py`, cross-validation, GridSearchCV, leakage experiment, final evaluation, saved model and reports |
 | Vedant  | Cost rule and classes: `noshows/evaluation.py`, `noshows/appointment.py`, `noshows/predictor.py`, threshold selection, class tests |
 | Bibhash | App and Space: `app.py` (Gradio Blocks), public Hugging Face Space, page checks |
-| Sonam   | Integration, tests and README: environment and config files, deployment tests, integration reviews, fresh-clone check, README, demo coordination |
+| Sonam (GitHub: SonamTsheringHumber; commits appear as Sonamtshering21, same person) | Integration, tests and README: environment and config files, deployment tests, integration tests, integration reviews, fresh-clone check, README, demo coordination |
 
-Every member committed from their own account. Each change reached `main` through a
-pull request approved by at least two other members.
+Every member committed from their own account. Most changes reached `main` through
+pull requests reviewed by two members. PR #1 (restoring the supplied age line in
+`data.py`) had one review before merging and was reviewed by a second member after
+the merge. A few small README edits were committed directly to `main`. The pull
+request pages on GitHub are the record of who reviewed what.
 
 ## Decisions
 
@@ -137,7 +140,10 @@ cost $18,921, against $27,475 for calling nobody and $24,000 for calling everybo
 ## Result
 
 Final held-out test set (1,000 appointments), scored once with the frozen model
-and threshold. Source: `reports/metrics.json`.
+and threshold. Source: `reports/metrics.json`. The settings were frozen before the
+test set was used. Later runs of `python -m noshows.train` (to check the command
+works from a fresh clone) reuse the same frozen model settings and threshold with
+no retuning, and reproduce exactly the same results.
 
 | Metric | Value |
 |--------|-------|
@@ -166,8 +172,8 @@ known after the visit, so it effectively gives away the answer.
 
 ## Tests
 
-`tests/` contains 77 test functions, 11 of them parametrized, and the full suite
-passes (119 test cases):
+`tests/` contains 79 test functions, 12 of them parametrized, and the full suite
+passes (124 test cases):
 
 - Data and pipeline (Joe): reproducible data, excluded columns absent, stratified
   75/25 split, missing `distance_km` handled.
@@ -175,8 +181,8 @@ passes (119 test cases):
   call-everybody cheapest cases, threshold at both extremes.
 - Classes (Vedant): valid booking and blank distance accepted, each impossible
   number and unseen category rejected with the field named, probability in [0, 1],
-  riskier booking scores higher, decision at/below/above threshold, model loaded
-  once (monkeypatched `joblib.load`).
+  decision at/below/above threshold, model loaded once (monkeypatched
+  `joblib.load`).
 - Training (Sahar): model comparison, tuning, frozen settings and reproducible
   training outputs.
 - Page (Bibhash, `tests/test_app.py`): field errors, blank-distance warning, and the
@@ -185,6 +191,10 @@ passes (119 test cases):
   installed / `model_info.json` / `requirements.txt`; gradio and spaces absent from
   `requirements.txt`; README `sdk_version` matches installed Gradio;
   `python_version` is 3.12; `app_file` exists; `models/` not git-ignored.
+- Integration (Sonam, `tests/test_integration.py`): with the real saved model, a
+  clearly riskier booking scores higher than a safer one and gets a call while the
+  safer one does not; raising any single risk factor (prior no-shows, lead time,
+  online booking, self-pay) raises the score.
 
 From a fresh clone with the environment active:
 
