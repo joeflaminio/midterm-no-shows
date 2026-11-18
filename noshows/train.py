@@ -1,7 +1,7 @@
 """Sahar's draft orchestration; teammate interfaces need integration agreement.
 
 All model selection uses training data. Importing this module does not train anything.
-The CLI expects Joe's and Vedant's real modules, which are intentionally not bundled.
+The final CLI uses Joe's pipeline and Vedant's merged evaluation functions.
 """
 
 import json
@@ -44,7 +44,7 @@ SCORING = {
 
 @dataclass(frozen=True)
 class Interfaces:
-    """Proposed contracts, not instructor-specified or teammate-confirmed APIs."""
+    """Injectable team interfaces; production binding is in project_interfaces()."""
 
     seed: int
     numeric_features: tuple[str, ...]
@@ -73,7 +73,7 @@ def candidates(seed):
 def tuning_grid(name):
     """All candidate grids have two parameters and six combinations.
 
-    The proposed shared estimator step name is 'model'; confirm with Joe.
+    Joe's shared estimator step is named 'model'.
     """
     grids = {
         "logistic_balanced": {
@@ -256,20 +256,17 @@ def restore_split_frames(frame, split):
     return frame.loc[train_index].copy(), frame.loc[test_index].copy()
 
 
-def main():
-    # Final submission entrypoint: do not execute during development.
-    # PROVISIONAL names: replace only after Joe and Vedant confirm their APIs.
-    from noshows.data import make_appointments
+def project_interfaces():
+    """Bind the real shared pipeline and merged evaluation implementation."""
     from noshows.evaluation import choose_threshold, total_cost
     from noshows.pipeline import (
         CATEGORICAL_FEATURES,
         NUMERIC_FEATURES,
         SEED,
         build_pipeline,
-        split_data,
     )
 
-    api = Interfaces(
+    return Interfaces(
         SEED,
         tuple(NUMERIC_FEATURES),
         tuple(CATEGORICAL_FEATURES),
@@ -277,6 +274,14 @@ def main():
         total_cost,
         choose_threshold,
     )
+
+
+def main():
+    # Final submission entrypoint: do not execute during development.
+    from noshows.data import make_appointments
+    from noshows.pipeline import SEED, split_data
+
+    api = project_interfaces()
     frame = make_appointments(seed=SEED)
     train_frame, test_frame = restore_split_frames(frame, split_data(frame))
     model, comparison, details = prepare_training(train_frame, api)

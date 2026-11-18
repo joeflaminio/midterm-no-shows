@@ -3,8 +3,9 @@
 import numpy as np
 import pandas as pd
 
+from noshows import evaluation
 from noshows import pipeline as joe
-from noshows.train import Interfaces, prepare_training, restore_split_frames
+from noshows.train import prepare_training, project_interfaces, restore_split_frames
 
 
 def test_joe_pipeline_training_integration():
@@ -21,22 +22,9 @@ def test_joe_pipeline_training_integration():
     assert len(train) == 120 and len(test) == 40
     assert not len(train.index.intersection(test.index))
 
-    def cost(y, calls):
-        return 8 * np.asarray(calls).sum() + 35 * np.sum(
-            (np.asarray(y) == 1) & ~np.asarray(calls, dtype=bool)
-        )
-
-    def threshold(y, probabilities, grid):
-        return min(grid, key=lambda t: cost(y, probabilities >= t))
-
-    api = Interfaces(
-        joe.SEED,
-        tuple(joe.NUMERIC_FEATURES),
-        tuple(joe.CATEGORICAL_FEATURES),
-        joe.build_pipeline,
-        cost,
-        threshold,
-    )
+    api = project_interfaces()
+    assert api.total_cost is evaluation.total_cost
+    assert api.choose_threshold is evaluation.choose_threshold
     model, comparison, details = prepare_training(train, api)
     assert len(comparison) == 4
     assert list(model.feature_names_in_) == joe.ALL_FEATURES

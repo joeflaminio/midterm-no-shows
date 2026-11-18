@@ -46,7 +46,7 @@ values and population-standard-deviation reporting.
 
 Local Python3.11 matches environment.yml. README Space settings and deployment
 tests specify Python3.12; actual deployment/runtime parity remains unverified.
-Joe PR2 has merged and main has been integrated into this draft. Vedant's evaluation,
-Appointment and predictor code remain dependencies. Final threshold, leakage
+Joe PR2 has merged and main has been integrated into this draft. Vedant's evaluation functions are integrated from merged PR #4 and tested only
+with toy data. Appointment and predictor code remain dependencies. Final threshold, leakage
 results, model files, final holdout evaluation and deployment checks remain
 pending. Model-selection CV estimates are not unbiased final performance.
