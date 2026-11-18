@@ -277,18 +277,10 @@ def project_interfaces():
 
 
 def main():
-    # Final submission entrypoint: do not execute during development.
-    from noshows.data import make_appointments
-    from noshows.pipeline import SEED, split_data
+    # Frozen final run; refuses any repeated holdout evaluation in this checkout.
+    from noshows.finalize_training import main as finalize_main
 
-    api = project_interfaces()
-    frame = make_appointments(seed=SEED)
-    train_frame, test_frame = restore_split_frames(frame, split_data(frame))
-    model, comparison, details = prepare_training(train_frame, api)
-    metrics = evaluate_final(model, test_frame, details["threshold"], api)
-    save_outputs(
-        Path(__file__).resolve().parents[1], model, comparison, details, metrics, api
-    )
+    finalize_main()
 
 
 if __name__ == "__main__":
