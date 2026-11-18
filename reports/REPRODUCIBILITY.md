@@ -50,3 +50,10 @@ Joe PR2 has merged and main has been integrated into this draft. Vedant's evalua
 with toy data. Appointment and predictor code remain dependencies. Final threshold, leakage
 results, model files, final holdout evaluation and deployment checks remain
 pending. Model-selection CV estimates are not unbiased final performance.
+
+For the subsequent training-only threshold/leakage evidence, use
+`python -m noshows.training_diagnostics --output-dir ../new-training-diagnostics`.
+See reports/training_progress.md for results, source-hash convention and limitations.
+This separate safe command supersedes the pending threshold/leakage status above;
+it does not change the original CV-only reproduction or its archived evidence.
+Final model, final holdout evaluation and deployment remain pending.
